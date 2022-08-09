@@ -80,7 +80,8 @@ export const createApp = ((...args) => {
     injectCompilerOptionsCheck(app)
   }
 
-  const { mount } = app
+  const { mount } = app // 将原本的 mount 备着 供下边再次封装 app.mount 用
+  // 重新封装 app.mount 主要对原本的 mount 做一些边界和条件处理
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
     const container = normalizeContainer(containerOrSelector) // container 就是容器节点
     if (!container) return
