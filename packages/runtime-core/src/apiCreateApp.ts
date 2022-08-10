@@ -145,6 +145,10 @@ export type Plugin =
       install: PluginInstallFunction
     }
 
+// 这里边用到了 WeakMap，WeakMap 是对每个键值对的弱引用（它的键只能是对象）
+// 不同于 Map 利用双数组分别在索引位置储存键和值（可以遍历，也就是会对键进行引用）的特点，WeakMap 的键无法被遍历，也就导致了它是弱引用，不会影响垃圾回收进行销毁
+// WeakMap 应用场景：
+// 当我们需要关联对象和数据，比如在不修改原有对象的情况下储存某些属性或者根据对象储存一些计算的值等，而又不想手动去管理这些内存问题的时候就可以使用 WeakMap
 export function createAppContext(): AppContext {
   return {
     app: null as any,
@@ -193,6 +197,8 @@ export function createAppAPI<HostElement>(
 
     let isMounted = false
 
+    // 给 context.app 定义一个包含以下方法的对象
+    // 定义了诸多方法 app.use、app.mixin、app.component、app.directive、app.mount、app.unmount、app.provide
     const app: App = (context.app = {
       _uid: uid++,
       _component: rootComponent as ConcreteComponent,
@@ -279,11 +285,11 @@ export function createAppAPI<HostElement>(
       },
 
       mount(
-        rootContainer: HostElement,
+        rootContainer: HostElement, // #app 容器
         isHydrate?: boolean,
         isSVG?: boolean
       ): any {
-        if (!isMounted) {
+        if (!isMounted) { // 第一次进来 isMounted=false 所以会走这里
           // #5571
           if (__DEV__ && (rootContainer as any).__vue_app__) {
             warn(
@@ -294,7 +300,8 @@ export function createAppAPI<HostElement>(
           }
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
-            rootProps
+            rootProps // 如果 createApp 只传了一个参数，那这个 rootProps 就是 null
+            // 当然在初始化时可以为 root 组件传一些参数，rootProps 其实就是 <App key=value>，是组件的 attrs 属性
           )
           // store app context on the root VNode.
           // this will be set on the root instance on initial mount.

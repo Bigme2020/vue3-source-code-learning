@@ -13,13 +13,18 @@
 
   <script src="../packages/vue/dist/vue.global.js"></script>
   <script>
-    const { createApp } = Vue
+    const { createApp, ref, onMounted } = Vue
     const App = {
-      template: `<div>123</div>`
+      template: `<div>{{a}}</div>`,
+      setup() {
+        const a = ref(1)
+        return { a }
+      }
     }
     debugger
     const app = createApp(App)
     app.mount('#app')
+
   </script>
 </body>
 

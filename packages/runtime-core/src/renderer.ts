@@ -327,12 +327,13 @@ function baseCreateRenderer(
     initFeatureFlags()
   }
 
-  const target = getGlobalThis()
+  const target = getGlobalThis() // 初次渲染时这里是 window
   target.__VUE__ = true
   if (__DEV__ || __FEATURE_PROD_DEVTOOLS__) {
     setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__, target)
   }
 
+  // 从 options 中拿到值并加上前缀 host
   const {
     insert: hostInsert,
     remove: hostRemove,

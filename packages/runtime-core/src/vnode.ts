@@ -488,10 +488,11 @@ function createBaseVNode(
 export { createBaseVNode as createElementVNode }
 
 export const createVNode = (
-  __DEV__ ? createVNodeWithArgsTransform : _createVNode
+  __DEV__ ? createVNodeWithArgsTransform : _createVNode // 如果是开发环境会走一层封装，最终都会走到 _createVNode
 ) as typeof _createVNode
 
 function _createVNode(
+  // createApp(xxx).mount('#app') 一般这样写,那么这里的 type 就是 xxx 组件
   type: VNodeTypes | ClassComponent | typeof NULL_DYNAMIC_COMPONENT,
   props: (Data & VNodeProps) | null = null,
   children: unknown = null,
@@ -535,6 +536,7 @@ function _createVNode(
     type = convertLegacyComponent(type, currentRenderingInstance)
   }
 
+  // TODO: 8/10
   // class & style normalization.
   if (props) {
     // for reactive or proxy objects, we need to clone it to enable mutation.
